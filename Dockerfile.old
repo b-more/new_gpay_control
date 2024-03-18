@@ -1,0 +1,72 @@
+# Use the official PHP image as the base image
+FROM php:8.2-apache
+
+# Set the working directory
+WORKDIR /var/www/html
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
+    git \
+    libonig-dev \
+    libzip-dev \
+    libpng-dev \
+    libxml2-dev \
+    libpq-dev \
+    zip \
+    supervisor \
+    && apt-get install -y libicu-dev libzip-dev libonig-dev --no-install-recommends \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl zip calendar \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip intl
+
+# Copy application files
+COPY . /var/www/html
+
+# copy supervisor conf
+COPY laravel-worker.conf /etc/supervisor/conf.d
+
+#RUN unzip storage.zip
+
+# Install Node.js, NPM, and Vite
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install -y nodejs npm
+RUN npm install -g create-vite
+
+# Set the Apache document root
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Set ServerName directive
+RUN echo "ServerName control.captain.localhost" >> /etc/apache2/apache2.conf
+
+# Enable Apache modules
+RUN a2enmod rewrite
+RUN a2enmod headers
+
+# Set the permissions for Laravel storage and bootstrap/cache folders
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html/storage
+
+# Install Node.js dependencies
+COPY package*.json ./
+
+RUN php artisan key:generate
+
+RUN php artisan storage:link
+
+# Clear cache and configuration
+#RUN php artisan config:clear && \
+#    php artisan view:clear && \
+#    php artisan route:clear
+
+# Expose port 80 for HTTP traffic
+EXPOSE 80
+
+# Start Apache server
+CMD ["apache2-foreground"]
+

@@ -1,0 +1,42 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@config './tailwind.config.js';
+
+.fi-sidebar {
+    @apply bg-[#0B6C14] border-r-4 border-[#FCDC0F] !important;
+}
+
+.fi-sidebar-header {
+    @apply bg-[#0B6C14] !important;
+}
+
+.fi-sidebar-item-label {
+    @apply text-[#e1e1e1] hover:bg-transparent !important;
+}
+
+.fi-sidebar-item {
+    @apply bg-transparent !important;
+}
+.fi-sidebar-item-button {
+    @apply bg-[#0B6C14] hover:bg-transparent !important;
+}
+
+.fi-sidebar-item .fi-active .fi-sidebar-item-active {
+    @apply hover:bg-transparent border-r-4 border-[#FCDC0F] text-[#FCDC0F] bg-transparent !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-label {
+    @apply text-[#FCDC0F] hover:bg-transparent !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-button {
+    @apply bg-[#0B6C14] hover:bg-transparent rounded-[0px] border-r-4 border-[#FCDC0F] text-[#FCDC0F] !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-icon {
+    @apply bg-[#0B6C14] hover:bg-transparent text-[#FCDC0F] !important;
+}
+
+.fi-sidebar-group-label {
+    @apply text-gray-100 !important;
+}
